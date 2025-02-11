@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define MOD 26
+int modInverse(int a) {
+    for (int i = 1; i < MOD; i++) {
+        if ((a * i) % MOD == 1)
+            return i;
+    }
+    return -1; 
+}
+void encrypt(char text[], int a, int b) {
+    for (int i = 0; text[i] != '\0'; i++) {
+        if (isalpha(text[i])) {
+            char base = isupper(text[i]) ? 'A' : 'a';
+            text[i] = ((a * (text[i] - base) + b) % MOD) + base;
+        }
+    }
+}
+
+void decrypt(char text[], int a, int b) {
+    int a_inv = modInverse(a); 
+    if (a_inv == -1) {
+        printf("Invalid key 'a', decryption not possible!\n");
+        return;
+    }
+    for (int i = 0; text[i] != '\0'; i++) {
+        if (isalpha(text[i])) {
+            char base = isupper(text[i]) ? 'A' : 'a';
+            text[i] = ((a_inv * (text[i] - base - b + MOD)) % MOD) + base;
+        }
+    }
+}
+int main() {
+    char text[] = "HELLO WORLD";
+    int a = 5, b = 8; 
+    printf("Original Text: %s\n", text);
+    encrypt(text, a, b);
+    printf("Encrypted: %s\n", text);
+    decrypt(text, a, b);
+    printf("Decrypted: %s\n", text);
+
+    return 0;
+}
